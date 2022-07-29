@@ -1,3 +1,4 @@
+
 let bouquet_code = document.getElementById("bouquet_code");
 let vend_feedback = document.querySelector('.vend_feedback');
 
@@ -8,28 +9,11 @@ document.getElementById("cable_provider").onchange = function (e) {
     retrieveBouquetCode(cable_provider);
 }
 
-// Alternate way to get select value
-/*
-  function myFunction() {
-  var x = document.getElementById("mySelect").value;
-  document.getElementById("demo").innerHTML = x;
-}
-*/
-
-// Another way
-/*
-    var select = document.getElementById('language');
-    var value = select.options[select.selectedIndex].value;
-*/
-
-// console.log(cable_provider)
-
-// Retreive Providers Code 
 function retrieveBouquetCode(cableProvider) {
     const options = {
         method: 'GET',
         headers: {
-            Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmOTY2ZTU2NzIyYWU2NTA2NGZiNGJlOCIsImlhdCI6MTYwNzEwNTk5OCwiZXhwIjozMTcxNTE1NDgzOTh9.-1ZVCt99jk6a4KTOch4dH3mZaIDSu79ojO0P6QPf_Go'
+            Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmOTY2ZTU2NzIyYWU2NTA2NGZiNGJlOCIsImlhdCI6MTYwNzEwNTk5OCwiZXhwIjozMTcxNTE1NDgzOTh9.-1ZVCt99jk6a4KTOch4dH3mZaIDSu79ojO0P6QPf_Go"
         }
     };
 
@@ -47,7 +31,7 @@ function createBouquetOptions(resp, htmlContainer, htmlElementToCreate) {
     htmlContainer.innerHTML = "";
     let resultProperties = [];
 
-    for (key in resp.data) {
+    for (let key in resp.data) {
         let property = [];
         property.push(key);
         property.push(resp.data[key]);
@@ -97,7 +81,7 @@ const form = document.querySelector("#form");
 const IUC_REQUIRED = "Please enter smart Card Number";
 const PROVIDER_REQUIRED = "Please choose provider";
 const BOUQUET_REQUIRED = "Please choose bouquet";
-const MERCHANT_ID = "Please enter merchant ID";
+// const MERCHANT_ID = "Please enter merchant ID";
 const TRANSACTION_REFERENCE = "Please enter transaction reference";
 
 form.addEventListener("submit", function (event) {
@@ -108,43 +92,43 @@ form.addEventListener("submit", function (event) {
     let iucValid = hasValue(form.elements["card_number"], IUC_REQUIRED);
     let providerValid = hasValue(form.elements["cable_provider"], PROVIDER_REQUIRED);
     let bouquetValid = hasValue(form.elements["bouquet_code"], BOUQUET_REQUIRED);
-    let merchantValid = hasValue(form.elements["merchant_id"], MERCHANT_ID);
+    // let merchantValid = hasValue(form.elements["merchant_id"], MERCHANT_ID);
     let trnsactionValid = hasValue(form.elements["transact_ref"], TRANSACTION_REFERENCE);
 
     const iuc_number = form.elements["card_number"].value;
     const provider = form.elements["cable_provider"].value;
 
     const bouquet = form.elements["bouquet_code"].value;
-    const merchant = form.elements["merchant_id"].value;
+    // const merchant = form.elements["merchant_id"].value;
 
     const trans_ref = form.elements["transact_ref"].value;
 
     // if valid, submit the form.
-    if (iucValid && providerValid && bouquetValid && merchantValid && trnsactionValid) {
+    if (iucValid && providerValid && bouquetValid && trnsactionValid) {
         // console.log(iuc_number, provider, bouquet, merchant, trans_ref)
-        cableVend_request(iuc_number, provider, bouquet, merchant, trans_ref)
+        cableVend_request(iuc_number, provider, bouquet, trans_ref)
     }
 });
 
-function cableVend_request(iuc_number, provider, bouquet, merchant, trans_ref) {
+function cableVend_request(iuc_number, provider, bouquet, trans_ref) {
     const loader = document.querySelector(".loader_container");
     loader.hidden = false;
     const options = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmOTY2ZTU2NzIyYWU2NTA2NGZiNGJlOCIsImlhdCI6MTYwNzEwNTk5OCwiZXhwIjozMTcxNTE1NDgzOTh9.-1ZVCt99jk6a4KTOch4dH3mZaIDSu79ojO0P6QPf_Go'
+            Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmOTY2ZTU2NzIyYWU2NTA2NGZiNGJlOCIsImlhdCI6MTYwNzEwNTk5OCwiZXhwIjozMTcxNTE1NDgzOTh9.-1ZVCt99jk6a4KTOch4dH3mZaIDSu79ojO0P6QPf_Go"
         },
         body: `{
             "smartcard_no":"${iuc_number}",
             "provider_code":"${provider}",
             "bouquet_code":"${bouquet}",
-            "merchant_id":"${merchant}",
+            "merchant_id":"2348029150812",
             "transaction_reference":"${trans_ref}"
         }`
     };
 
-    fetch('https://vas-vendors.myfela.ng/staging/cabletv/vendCabletv', options)
+    fetch(`https://vas-vendors.myfela.ng/staging/cabletv/vendCabletv`, options)
         .then(response => response.json())
         .then(response => {
             console.log(response)
@@ -160,49 +144,50 @@ function cableVend_request(iuc_number, provider, bouquet, merchant, trans_ref) {
                 function vendResultOutput() {
 
                     const element = `
-                       <div>
+                    <ul>
+                       <li>
                        <span>Status:<span>${response.status}!</span>
-                       </div>
-                       <div>
+                       </li>
+                       <li>
                        <span>Provider:<span>${response.data.provider}</span>
-                       </div>
-                       <div>
+                       </li>
+                       <li>
                        <span>Package Name:<span>${response.data.packageName}</span>
-                       </div>
-                       <div>
+                       </li>
+                       <li>
                        <span>Smart Card Number:<span>${response.data.smartCardNo}</span>
-                       </div>
-                       <div>
+                       </li>
+                       <li>
                        <span>Amount:<span>${response.data.amount} naira</span>
-                       </div>
-                       <div>
+                       </li>
+                       <li>
                        <span>Receipt ID:<span>${response.data.receiptId}</span>
-                       </div>
-                       <div>
+                       </li>
+                       <li>
                        <span>Date:<span>${response.data.date}</span>
-                       </div>
-                       <div>
+                       </li>
+                       <li>
                        <span>Merchant ID:<span>${response.data.commissionInfo.merchant_id}</span>
-                       </div>
-                       <div>
+                       </li>
+                       <li>
                        <span>Vend Amount:<span>${response.data.commissionInfo.vendAmount}</span>
-                       </div>
-                       <div>
+                       </li>
+                       <li>
                        <span>Service:<span>${response.data.commissionInfo.service}</span>
-                       </div>
-                       <div>
+                       </li>
+                       <li>
                        <span>Service Provider:<span>${response.data.commissionInfo.service_provider}</span>
-                       </div>
-                       <div>
+                       </li>
+                       <li>
                        <span>Commission Rate:<span>${response.data.commissionInfo.commissionRate}</span>
-                       </div>
-                       <div>
+                       </li>
+                       <li>
                        <span>Commission Gained:<span>${response.data.commissionInfo.commissionGained}</span>
-                       </div>
-                       <div>
+                       </li>
+                       <li>
                        <span>Discounted Amount:<span>${response.data.commissionInfo.discountedAmount}</span>
-                       </div>
-
+                       </li>
+                    </ul>
                    `;
                     vend_feedback.innerHTML = element
                 }
